@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Task Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<div class="container-fluid">
+<div class="row">
+
+<div class="col-md-3 bg-dark text-white p-4">
+
+    <h3>Task Manager</h3>
+
+    <form method="GET" action="/">
+        <input name="q" value="{{ q if q }}" class="form-control mb-2" placeholder="Search tasks...">
+        <button class="btn btn-primary w-100 mb-2">Search</button>
+    </form>
+
+    {% if q %}
+    <a href="/" class="btn btn-secondary w-100 mb-3">
+        View All Tasks
+    </a>
+    {% endif %}
+
+    <hr>
+
+    <h5>Add / Edit Task</h5>
+
+    <form method="POST" action="/add_or_update">
+        <input type="hidden" id="task_id" name="task_id">
+
+        <input id="title" name="title" class="form-control mb-2" placeholder="Task" required>
+
+        <select id="category" name="category" class="form-control mb-2">
+            <option>Work</option>
+            <option>Personal</option>
+            <option>Study</option>
+            <option>Other</option>
+        </select>
+
+        <input id="deadline" type="datetime-local" name="deadline" class="form-control mb-2" required>
+
+        <button class="btn btn-success w-100">Save</button>
+    </form>
+
+</div>
+
+<div class="col-md-9 p-4">
+
+<h3>Ongoing Tasks</h3>
+
+<table class="table table-bordered bg-white mb-4">
+<tbody>
+{% for t in ongoing %}
+<tr data-id="{{t[0]}}" data-title="{{t[1]}}" data-deadline="{{t[3]}}">
+    <td>{{ t[1] }}</td>
+    <td>{{ t[2] }}</td>
+    <td>{{ t[3] }}</td>
+
+    <td><span class="badge bg-warning">Ongoing</span></td>
+
+    <td>
+        <a href="/toggle/{{t[0]}}" class="btn btn-success btn-sm">Complete</a>
+
+        <button class="btn btn-primary btn-sm"
+            onclick="editTask(this)"
+            data-id="{{t[0]}}"
+            data-title="{{t[1]}}"
+            data-category="{{t[2]}}"
+            data-deadline="{{t[3]}}">
+            Edit
+        </button>
+
+        <a href="/delete/{{t[0]}}" class="btn btn-danger btn-sm">Delete</a>
+    </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+<h3>Incomplete Tasks</h3>
+
+<table class="table table-bordered bg-white mb-4">
+<tbody>
+{% for t in incomplete %}
+<tr>
+    <td>{{ t[1] }}</td>
+    <td>{{ t[2] }}</td>
+    <td>{{ t[3] }}</td>
+
+    <td><span class="badge bg-danger">Overdue</span></td>
+
+    <td>
+        <a href="/delete/{{t[0]}}" class="btn btn-danger btn-sm">Delete</a>
+    </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+<h3>Completed Tasks</h3>
+
+<table class="table table-bordered bg-white">
+<tbody>
+{% for t in completed %}
+<tr>
+    <td>{{ t[1] }}</td>
+    <td>{{ t[2] }}</td>
+    <td>{{ t[3] }}</td>
+
+    <td><span class="badge bg-success">Completed</span></td>
+
+    <td>
+        <a href="/delete/{{t[0]}}" class="btn btn-danger btn-sm">Delete</a>
+    </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>
